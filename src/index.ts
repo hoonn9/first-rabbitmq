@@ -21,7 +21,7 @@ app.post('/publish', async (req, res) => {
   const channel = await getAmqpConnection().createConfirmChannel();
 
   const exchangeName = 'processing';
-  const routingKey = 'Bye';
+  const routingKey = 'request';
   const requestId = lastRequestId++;
 
   const payload: Payload = {
@@ -46,16 +46,19 @@ app.listen(3000, () => {
 (async function () {
   await initializeAmqpConnection();
 
-  const testQueueConsumer = consume(getAmqpConnection(), 'TestQueue');
+  const requestQueueConsumer = consume(
+    getAmqpConnection(),
+    'processing.requests'
+  );
 
   const channel = await getAmqpConnection().createChannel();
   await channel.prefetch(1);
 
-  testQueueConsumer(channel, (data: Payload) => {
+  requestQueueConsumer(channel, (data: Payload) => {
     console.log('listener1:', data);
   });
 
-  testQueueConsumer(channel, (data: Payload) => {
+  requestQueueConsumer(channel, (data: Payload) => {
     console.log('listener2: ', data);
   });
 })();
