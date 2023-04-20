@@ -1,10 +1,7 @@
 import * as express from 'express';
-import {
-  consume,
-  getAmqpConnection,
-  initializeAmqpConnection,
-  publish,
-} from './lib/amqp';
+import {getAmqpConnection, initializeAmqpConnection} from './amqp/connection';
+import {publish} from './amqp/publisher';
+import {consume} from './amqp/consumer';
 
 const app = express();
 
